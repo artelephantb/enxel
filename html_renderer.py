@@ -12,7 +12,12 @@ class HTMLRenderer:
 		return f'<!--{el.text}-->'
 
 	def text_el(self, el) -> str:
-		return f'<p>{el.text}</p>'
+		pos = el.get('pos', '0,0')
+		x, y = pos.split(',')
+
+		size = el.get('size', '16')
+
+		return f'<p style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;">{el.text}</p>'
 
 
 	def _render_element(self, el) -> str:
