@@ -17,7 +17,19 @@ class HTMLRenderer:
 
 		size = el.get('size', '16')
 
-		return f'<p style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;">{el.text}</p>'
+		return f'<p style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px">{el.text}</p>'
+
+	def image_el(self, el) -> str:
+		src = el.get('src', 'no_image_specified')
+		draggable = el.get('draggable', 'false')
+
+		pos = el.get('pos', '0,0')
+		x, y = pos.split(',')
+
+		scale = el.get('scale', 'fit-content,fit-content')
+		width, height = scale.split(',')
+
+		return f'<img src="{src}" draggable="{draggable}" alt="{el.text}" style="position:absolute;left:{x}px;top:{y}px;width:{width};height:{height}"/>'
 
 
 	def _render_element(self, el) -> str:
@@ -32,6 +44,8 @@ class HTMLRenderer:
 				return self.comment_el(el)
 			case 'text':
 				return self.text_el(el)
+			case 'img':
+				return self.image_el(el)
 			case _:
 				raise ElementDoesNotExistError(el.tag)
 
