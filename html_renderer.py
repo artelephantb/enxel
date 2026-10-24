@@ -11,13 +11,21 @@ class HTMLRenderer:
 	def comment_el(self, el) -> str:
 		return f'<!--{el.text}-->'
 
-	def text_el(self, el) -> str:
+	def text_el(self, el, style_overides: dict) -> str:
 		pos = el.get('pos', '0,0')
 		x, y = pos.split(',')
 
 		size = el.get('size', '16')
 
-		return f'<p style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px">{el.text}</p>'
+		style = ''
+		if not style_overides.get('position'):
+			style += 'position:absolute;'
+		if not style_overides.get('left'):
+			style += f'left:{x}px;'
+		if not style_overides.get('top'):
+			style += f'top:{y}px;'
+
+		return f'<p style="{style}font-size:{size}px">{el.text}</p>'
 
 	def link_el(self, el) -> str:
 		pos = el.get('pos', '0,0')
@@ -40,7 +48,20 @@ class HTMLRenderer:
 		return f'<img src="{src}" draggable="{draggable}" alt="{el.text}" style="position:absolute;left:{x}px;top:{y}px;width:{width};height:{height}"/>'
 
 
-	def _render_element(self, el) -> str:
+	def vbox_el(self, el) -> str:
+		html = ''
+		for child in el:
+			html_el = self._render_element(child, {
+				'position': 'cancel',
+				'left': 'cancel',
+				'top': 'cancel'
+			})
+			html += html_el
+
+		return html
+
+
+	def _render_element(self, el, style_overides={}) -> str:
 		# Comment
 		if not isinstance(el.tag, str):
 			if self.keep_comments:
@@ -51,11 +72,13 @@ class HTMLRenderer:
 			case 'comment':
 				return self.comment_el(el)
 			case 'text':
-				return self.text_el(el)
+				return self.text_el(el, style_overides)
 			case 'link':
 				return self.link_el(el)
 			case 'img':
 				return self.image_el(el)
+			case 'vbox':
+				return self.vbox_el(el)
 			case _:
 				raise ElementDoesNotExistError(el.tag)
 
