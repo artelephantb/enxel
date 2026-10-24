@@ -2,4 +2,6 @@ from enxel import Enxel
 
 
 en = Enxel.from_file('demo.html')
-print(en.render())
+output = en.render()
+
+print(output)
