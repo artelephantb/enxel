@@ -19,6 +19,14 @@ class HTMLRenderer:
 
 		return f'<p style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px">{el.text}</p>'
 
+	def link_el(self, el) -> str:
+		pos = el.get('pos', '0,0')
+		x, y = pos.split(',')
+
+		to = el.get('to', '')
+
+		return f'<a href="{to}" style="position:absolute;left:{x}px;top:{y}px">{self._render_multiple_elements(el)}</a>'
+
 	def image_el(self, el) -> str:
 		src = el.get('src', 'no_image_specified')
 		draggable = el.get('draggable', 'false')
@@ -44,16 +52,24 @@ class HTMLRenderer:
 				return self.comment_el(el)
 			case 'text':
 				return self.text_el(el)
+			case 'link':
+				return self.link_el(el)
 			case 'img':
 				return self.image_el(el)
 			case _:
 				raise ElementDoesNotExistError(el.tag)
 
-	def render(self, exnel) -> str:
-		html = '<!DOCTYPE html><html>'
-		for child in exnel.root:
+	def _render_multiple_elements(self, root) -> str:
+		html = ''
+		for child in root:
 			html_el = self._render_element(child)
 			html += html_el
+
+		return html
+
+	def render(self, exnel) -> str:
+		html = '<!DOCTYPE html><html>'
+		html += self._render_multiple_elements(exnel.root)
 		html += '</html>'
 
 		return html
