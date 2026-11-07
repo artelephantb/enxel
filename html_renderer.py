@@ -122,11 +122,12 @@ class HTMLRenderer:
 		}, html_removals, html_overides, single=True)
 
 
-	def vcon_el(self, el) -> str:
-		html = ''
+	def vcon_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
+		html = '<div style="display:flex;flex-direction:column">'
 		for child in el:
 			html_el = self._render_element(child, style_removals=['position', 'left', 'top'])
 			html += html_el
+		html += '</div>'
 
 		return html
 
