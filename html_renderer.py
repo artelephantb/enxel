@@ -7,7 +7,8 @@ def compile_html(
 	content: str,
 	attrs: dict,
 	attrs_removals=[],
-	attrs_overides={}
+	attrs_overides={},
+	single=False,
 ) -> str:
 	html = f'<{tag} '
 
@@ -21,7 +22,10 @@ def compile_html(
 	for attr_name in final_attrs:
 		html += f'{attr_name}="{final_attrs[attr_name]}"'
 
-	html += f'>{content}</{tag}>'
+	if single:
+		html += f'/>'
+	else:
+		html += f'>{content}</{tag}>'
 	return html
 
 def compile_css(
@@ -69,14 +73,14 @@ class HTMLRenderer:
 			'style': style
 		}, html_removals, html_overides)
 
-	def link_el(self, el) -> str:
+	def link_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
 		pos = get_vector2(el, 'pos', '0,0')
 
 		style = compile_css({
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px'
-		})
+		}, style_removals, style_overides)
 
 		to = get_str(el, 'to', '')
 
@@ -87,19 +91,35 @@ class HTMLRenderer:
 		return compile_html('a', content, {
 			'href': to,
 			'style': style
-		})
+		}, html_removals, html_overides)
 
-	def image_el(self, el) -> str:
+	def image_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
 		src = get_str(el, 'src')
 		draggable = get_bool(el, 'draggable', 'false')
 
 		pos = get_vector2(el, 'pos', '0,0')
 
-		scale = el.get('scale')
-		if scale:
+		width = 'keep'
+		height = 'keep'
+		if el.get('scale'):
 			scale = get_vector2(el, 'scale')
+			width = str(scale.x) + 'px'
+			height = str(scale.y) + 'px'
 
-		return f'<img src="{src}" draggable="{draggable}" alt="{el.text}" style="position:absolute;left:{x}px;top:{y}px;width:{width}px;height:{height}px"/>'
+		style = compile_css({
+			'position': 'absolute',
+			'left': str(pos.x) + 'px',
+			'top': str(pos.y) + 'px',
+			'width': width,
+			'height': height
+		}, style_removals, style_overides)
+
+		return compile_html('img', '', {
+			'src': src,
+			'draggable': draggable,
+			'alt': el.text,
+			'style': style
+		}, html_removals, html_overides, single=True)
 
 
 	def vcon_el(self, el) -> str:
@@ -124,11 +144,11 @@ class HTMLRenderer:
 			case 'text':
 				return self.text_el(el, html_overides, html_removals, style_overides, style_removals)
 			case 'link':
-				return self.link_el(el)
+				return self.link_el(el, html_overides, html_removals, style_overides, style_removals)
 			case 'img':
-				return self.image_el(el)
+				return self.image_el(el, html_overides, html_removals, style_overides, style_removals)
 			case 'vcon':
-				return self.vcon_el(el)
+				return self.vcon_el(el, html_overides, html_removals, style_overides, style_removals)
 			case _:
 				raise ElementDoesNotExistError(el.tag)
 
