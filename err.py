@@ -7,5 +7,5 @@ class AttributeNotFoundError(Exception):
 		super().__init__(f"Attribute '{attribute}' not found on '{element_tag}'")
 
 class MismatchedTypesError(Exception):
-	def __init__(self, element_tag: str, expected: str, found: str):
-		super().__init__(f"Mismatched types (expected {expected}, found '{found}') on '{element_tag}'")
+	def __init__(self, expected: str, found: str):
+		super().__init__(f"Mismatched types (expected {expected}, found '{found}')")

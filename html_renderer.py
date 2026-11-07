@@ -1,65 +1,6 @@
 from err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
+from exnel_types import *
 
-
-def get_attribute(el, attr: str, type, default=None):
-	value = el.get(attr, default)
-	if value == None:
-		raise AttributeNotFoundError(attr, el.tag)
-
-	match type:
-		case 'str':
-			return value
-		case 'int':
-			try:
-				int(value)
-			except ValueError:
-				raise MismatchedTypesError(el.tag, 'int', value)
-			return value
-		case 'bool':
-			if value != 'true' and value != 'false':
-				raise MismatchedTypesError(el.tag, 'bool', value)
-			return value
-		case 'array':
-			return value.split(',')
-		case 'int_array':
-			numbers = value.split(',')
-			try:
-				for number in numbers:
-					int(number)
-			except ValueError:
-				raise MismatchedTypesError(el.tag, 'int_array', value)
-
-			return numbers
-		case 'float_array':
-			numbers = value.split(',')
-			try:
-				for number in numbers:
-					float(number)
-			except ValueError:
-				raise MismatchedTypesError(el.tag, 'float_array', value)
-
-			return numbers
-		case 'pos':
-			numbers = value.split(',')
-			if len(numbers) != 2: raise MismatchedTypesError(el.tag, 'pos', value)
-			try:
-				for number in numbers:
-					int(number)
-			except ValueError:
-				raise MismatchedTypesError(el.tag, 'pos', value)
-
-			return numbers
-		case 'scale':
-			numbers = value.split(',')
-			if len(numbers) != 2: raise MismatchedTypesError(el.tag, 'scale', value)
-			try:
-				for number in numbers:
-					if not number == 'keep':
-						int(number)
-			except ValueError:
-				raise MismatchedTypesError(el.tag, 'pos', value)
-
-			return numbers
 
 def compile_html(
 	tag: str,
@@ -78,7 +19,7 @@ def compile_html(
 		final_attrs[overide_name] = attrs_overides[overide_name]
 
 	for attr_name in final_attrs:
-		html += attr_name + '=' + final_attrs[attr_name]
+		html += f'{attr_name}="{final_attrs[attr_name]}"'
 
 	html += f'>{content}</{tag}>'
 	return html
@@ -98,7 +39,7 @@ def compile_css(
 		final_props[overide_name] = props_overides[overide_name]
 
 	for prop_name in final_props:
-		css += prop_name + ':' + final_props[prop_name] + ';'
+		css += prop_name + ':' + str(final_props[prop_name]) + ';'
 
 	return css
 
@@ -113,41 +54,50 @@ class HTMLRenderer:
 	def comment_el(self, el) -> str:
 		return f'<!--{el.text}-->'
 
-	def text_el(self, el, style_overides: dict, style_removals: list) -> str:
-		x, y = get_attribute(el, 'pos', 'pos', '0,0')
-		size = get_attribute(el, 'size', 'int', '16')
-
-		style = ''
-		if not style_overides.get('position'):
-			style += 'position:absolute;'
-		if not style_overides.get('left'):
-			style += f'left:{x}px;'
-		if not style_overides.get('top'):
-			style += f'top:{y}px;'
+	def text_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
+		pos = get_vector2(el, 'pos', '0,0')
+		size = get_int(el, 'size', '16')
 
 		style = compile_css({
 			'position': 'absolute',
-			'left': x + 'px',
-			'top': y + 'px',
-			'font-size': size + 'px'
+			'left': str(pos.x) + 'px',
+			'top': str(pos.y) + 'px',
+			'font-size': str(size) + 'px'
 		}, style_removals, style_overides)
 
-		return f'<p style="{style}">{el.text}</p>'
+		return compile_html('p', el.text, {
+			'style': style
+		}, html_removals, html_overides)
 
 	def link_el(self, el) -> str:
-		x, y = get_attribute(el, 'pos', 'pos', '0,0')
+		pos = get_vector2(el, 'pos', '0,0')
 
-		to = el.get('to', '')
+		style = compile_css({
+			'position': 'absolute',
+			'left': str(pos.x) + 'px',
+			'top': str(pos.y) + 'px'
+		})
 
-		return f'<a href="{to}" style="position:absolute;left:{x}px;top:{y}px">{self._render_multiple_elements(el)}</a>'
+		to = get_str(el, 'to', '')
+
+		content = el.text
+		if not content:
+			content = self._render_multiple_elements(el)
+
+		return compile_html('a', content, {
+			'href': to,
+			'style': style
+		})
 
 	def image_el(self, el) -> str:
-		src = get_attribute(el, 'src', 'str')
-		draggable = get_attribute(el, 'draggable', 'bool', 'false')
+		src = get_str(el, 'src')
+		draggable = get_bool(el, 'draggable', 'false')
 
-		x, y = get_attribute(el, 'pos', 'pos', '0,0')
+		pos = get_vector2(el, 'pos', '0,0')
 
-		width, height = get_attribute(el, 'scale', 'scale', 'keep,keep')
+		scale = el.get('scale')
+		if scale:
+			scale = get_vector2(el, 'scale')
 
 		return f'<img src="{src}" draggable="{draggable}" alt="{el.text}" style="position:absolute;left:{x}px;top:{y}px;width:{width}px;height:{height}px"/>'
 
@@ -161,18 +111,18 @@ class HTMLRenderer:
 		return html
 
 
-	def _render_element(self, el, style_overides={}, style_removals=[]) -> str:
+	def _render_element(self, el, html_overides={}, html_removals=[], style_overides={}, style_removals=[]) -> str:
 		# Comment
 		if not isinstance(el.tag, str):
 			if self.keep_comments:
-				return self.element_types.get('~comment')(el)
+				return self.comment_el(el)
 			return ''
 
 		match el.tag:
 			case 'comment':
 				return self.comment_el(el)
 			case 'text':
-				return self.text_el(el, style_overides, style_removals)
+				return self.text_el(el, html_overides, html_removals, style_overides, style_removals)
 			case 'link':
 				return self.link_el(el)
 			case 'img':
