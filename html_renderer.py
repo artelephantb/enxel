@@ -131,6 +131,15 @@ class HTMLRenderer:
 
 		return html
 
+	def hcon_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
+		html = '<div style="display:flex;flex-direction:row">'
+		for child in el:
+			html_el = self._render_element(child, style_removals=['position', 'left', 'top'])
+			html += html_el
+		html += '</div>'
+
+		return html
+
 
 	def _render_element(self, el, html_overides={}, html_removals=[], style_overides={}, style_removals=[]) -> str:
 		# Comment
@@ -150,6 +159,8 @@ class HTMLRenderer:
 				return self.image_el(el, html_overides, html_removals, style_overides, style_removals)
 			case 'vcon':
 				return self.vcon_el(el, html_overides, html_removals, style_overides, style_removals)
+			case 'hcon':
+				return self.hcon_el(el, html_overides, html_removals, style_overides, style_removals)
 			case _:
 				raise ElementDoesNotExistError(el.tag)
 
