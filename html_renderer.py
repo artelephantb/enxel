@@ -132,7 +132,9 @@ class HTMLRenderer:
 		return html
 
 	def hcon_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
-		html = '<div style="display:flex;flex-direction:row">'
+		align_items = get_str(el, 'align-items', 'left')
+
+		html = f'<div style="display:flex;flex-direction:row;justify-content:{align_items}">'
 		for child in el:
 			html_el = self._render_element(child, style_removals=['position', 'left', 'top'])
 			html += html_el
