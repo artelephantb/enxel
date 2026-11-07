@@ -61,7 +61,47 @@ def get_attribute(el, attr: str, type, default=None):
 
 			return numbers
 
-#def get_style_overides(original: dict, ov)
+def compile_html(
+	tag: str,
+	content: str,
+	attrs: dict,
+	attrs_removals=[],
+	attrs_overides={}
+) -> str:
+	html = f'<{tag} '
+
+	final_attrs = attrs
+	for remove in attrs_removals:
+		del final_attrs[remove]
+
+	for overide_name in attrs_overides:
+		final_attrs[overide_name] = attrs_overides[overide_name]
+
+	for attr_name in final_attrs:
+		html += attr_name + '=' + final_attrs[attr_name]
+
+	html += f'>{content}</{tag}>'
+	return html
+
+def compile_css(
+	props: dict,
+	props_removals=[],
+	props_overides={}
+) -> str:
+	css = ''
+
+	final_props = props
+	for remove in props_removals:
+		del final_props[remove]
+
+	for overide_name in props_overides:
+		final_props[overide_name] = props_overides[overide_name]
+
+	for prop_name in final_props:
+		css += prop_name + ':' + final_props[prop_name] + ';'
+
+	return css
+
 
 class HTMLRenderer:
 	def __init__(self, keep_comments=False):
@@ -73,7 +113,7 @@ class HTMLRenderer:
 	def comment_el(self, el) -> str:
 		return f'<!--{el.text}-->'
 
-	def text_el(self, el, style_overides: dict) -> str:
+	def text_el(self, el, style_overides: dict, style_removals: list) -> str:
 		x, y = get_attribute(el, 'pos', 'pos', '0,0')
 		size = get_attribute(el, 'size', 'int', '16')
 
@@ -85,7 +125,14 @@ class HTMLRenderer:
 		if not style_overides.get('top'):
 			style += f'top:{y}px;'
 
-		return f'<p style="{style}font-size:{size}px">{el.text}</p>'
+		style = compile_css({
+			'position': 'absolute',
+			'left': x + 'px',
+			'top': y + 'px',
+			'font-size': size + 'px'
+		}, style_removals, style_overides)
+
+		return f'<p style="{style}">{el.text}</p>'
 
 	def link_el(self, el) -> str:
 		x, y = get_attribute(el, 'pos', 'pos', '0,0')
@@ -108,17 +155,13 @@ class HTMLRenderer:
 	def vcon_el(self, el) -> str:
 		html = ''
 		for child in el:
-			html_el = self._render_element(child, {
-				'position': 'cancel',
-				'left': 'cancel',
-				'top': 'cancel'
-			})
+			html_el = self._render_element(child, style_removals=['position', 'left', 'top'])
 			html += html_el
 
 		return html
 
 
-	def _render_element(self, el, style_overides={}) -> str:
+	def _render_element(self, el, style_overides={}, style_removals=[]) -> str:
 		# Comment
 		if not isinstance(el.tag, str):
 			if self.keep_comments:
@@ -129,7 +172,7 @@ class HTMLRenderer:
 			case 'comment':
 				return self.comment_el(el)
 			case 'text':
-				return self.text_el(el, style_overides)
+				return self.text_el(el, style_overides, style_removals)
 			case 'link':
 				return self.link_el(el)
 			case 'img':
