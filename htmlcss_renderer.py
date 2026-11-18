@@ -48,12 +48,18 @@ def compile_css(
 	return css
 
 
-class HTMLRenderer:
-	def __init__(self, keep_comments=False):
+class HTMLCSSRenderer:
+	def __init__(self, keep_comments=False, separate_css=True):
 		# TODO: Add user defined elements
 		self.defined_elements = {}
 
 		self.keep_comments = False
+		self.separate_css = separate_css
+
+		self.exnel = None
+
+		self.html = ''
+		self.css = ''
 
 	def comment_el(self, el) -> str:
 		return f'<!--{el.text}-->'
@@ -174,9 +180,20 @@ class HTMLRenderer:
 
 		return html
 
-	def render(self, exnel, styling: dict) -> str:
+	def render(self, exnel):
+		self.exnel = exnel
+
 		html = '<!DOCTYPE html><html>'
 		html += self._render_multiple_elements(exnel.root)
 		html += '</html>'
 
-		return html
+		self.html = html
+
+	def save_html(self, path: str):
+		with open(path, 'w') as file:
+			file.write(self.html)
+
+	def save_css(self, path: str):
+		'''Note: Only works when separate_css flag is set (default state)'''
+		with open(path, 'w') as file:
+			file.write(self.css)
