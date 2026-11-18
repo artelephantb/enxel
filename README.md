@@ -1,5 +1,5 @@
 ![Screenshot of the demo page](screenshot.png)
-```html
+```xml
 <hcon align-items='center'>
 	<vcon>
 		<text size='50'>Exnel</text>
