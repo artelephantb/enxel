@@ -6,7 +6,7 @@ from html_renderer import HTMLRenderer
 enxel = Enxel.from_file('demo.xml')
 
 theme = Theme.from_file('demo_theme.xml')
-enxel.set_theme(theme)
+enxel.add_theme(theme)
 
 output = enxel.render(HTMLRenderer)
 

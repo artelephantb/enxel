@@ -174,7 +174,7 @@ class HTMLRenderer:
 
 		return html
 
-	def render(self, exnel) -> str:
+	def render(self, exnel, styling: dict) -> str:
 		html = '<!DOCTYPE html><html>'
 		html += self._render_multiple_elements(exnel.root)
 		html += '</html>'

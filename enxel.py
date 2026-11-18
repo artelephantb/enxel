@@ -9,7 +9,11 @@ class Enxel:
 		parser = etree.XMLParser(remove_blank_text=True)
 		self.root = etree.fromstring(data, parser=parser)
 
-		self.styles = {}
+		self.styles = {
+			'global': {
+				'font': 'Serif'
+			}
+		}
 
 	@classmethod
 	def from_file(cls, path: str):
@@ -21,10 +25,10 @@ class Enxel:
 		return cls(string.encode('utf-8'))
 
 
-	def set_theme(self, theme: Theme):
-		self.styles = theme.styles
+	def add_theme(self, theme: Theme):
+		theme.add_to(self.styles)
 
 
 	def render(self, renderer, keep_comments=False) -> str:
 		renderer_instance = renderer(keep_comments=keep_comments)
-		return renderer_instance.render(self)
+		return renderer_instance.render(self, self.styles)

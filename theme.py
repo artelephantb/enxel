@@ -30,3 +30,12 @@ class Theme:
 		for child in root:
 			self.styles[child.tag] = {}
 			self._parse_element(child)
+
+
+	def add_to(self, to: dict):
+		'''Adds this theme to another theme, replaces is already there'''
+		for key, value in self.styles.items():
+			try:
+				to[key].update(value)
+			except KeyError:
+				to[key] = value
