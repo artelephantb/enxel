@@ -72,7 +72,8 @@ class HTMLCSSRenderer:
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
-			'font-size': str(size) + 'px'
+			'font-size': str(size) + 'px',
+			'font-family': self.exnel.styles.get('global').get('font').removeprefix('[SYS] ')
 		}, style_removals, style_overides)
 
 		return compile_html('p', el.text, {
@@ -85,7 +86,8 @@ class HTMLCSSRenderer:
 		style = compile_css({
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
-			'top': str(pos.y) + 'px'
+			'top': str(pos.y) + 'px',
+			'font-family': self.exnel.styles.get('global').get('font').removeprefix('[SYS] ')
 		}, style_removals, style_overides)
 
 		to = get_str(el, 'to', '')
