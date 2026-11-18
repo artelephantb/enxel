@@ -1,4 +1,5 @@
 from lxml import etree
+from theme import Theme
 
 
 class Enxel:
@@ -16,6 +17,10 @@ class Enxel:
 	@classmethod
 	def from_str(cls, string: str):
 		return cls(string.encode('utf-8'))
+
+
+	def add_theme(self, theme: Theme):
+		print(theme)
 
 
 	def render(self, renderer, keep_comments=False) -> str:
