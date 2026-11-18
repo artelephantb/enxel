@@ -110,12 +110,14 @@ class HTMLCSSRenderer:
 	def link_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
 		pos = get_vector2(el, 'pos', '0,0')
 
-		style = compile_css({
+		uid = generate_uid()
+
+		self.css += compile_css_class({
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
 			'font-family': self.exnel.theme.get('link', 'font').removeprefix('[SYS] ')
-		}, style_removals, style_overides)
+		}, '.' + uid, style_removals, style_overides)
 
 		to = get_str(el, 'to', '')
 
@@ -125,7 +127,7 @@ class HTMLCSSRenderer:
 
 		return compile_html('a', content, {
 			'href': to,
-			'style': style
+			'class': uid
 		}, html_removals, html_overides)
 
 	def image_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
@@ -141,19 +143,21 @@ class HTMLCSSRenderer:
 			width = str(scale.x) + 'px'
 			height = str(scale.y) + 'px'
 
-		style = compile_css({
+		uid = generate_uid()
+
+		self.css += compile_css_class({
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
 			'width': width,
 			'height': height
-		}, style_removals, style_overides)
+		}, '.' + uid, style_removals, style_overides)
 
 		return compile_html('img', '', {
 			'src': src,
 			'draggable': draggable,
 			'alt': el.text,
-			'style': style
+			'class': uid
 		}, html_removals, html_overides, single=True)
 
 
