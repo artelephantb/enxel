@@ -1,6 +1,8 @@
 from err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
 from exnel_types import *
 
+from uid_generator import generate_uid
+
 
 def compile_html(
 	tag: str,
@@ -47,19 +49,42 @@ def compile_css(
 
 	return css
 
+def compile_css_class(
+	props: dict,
+	name: str,
+	props_removals=[],
+	props_overides={},
+	cases=[]
+) -> str:
+	final = name
+	for case in cases:
+		final += '::' + case
+
+	final += '{'
+	final += compile_css(
+		props,
+		props_removals=props_removals,
+		props_overides=props_overides
+	)
+	final += '}'
+
+	return final
+
 
 class HTMLCSSRenderer:
-	def __init__(self, keep_comments=False, separate_css=True):
+	def __init__(self, keep_comments=False, embed_css=False, css_link_path='/output.css'):
 		# TODO: Add user defined elements
 		self.defined_elements = {}
 
 		self.keep_comments = False
-		self.separate_css = separate_css
+		self.embed_css = embed_css
+		self.css_link_path = css_link_path
 
 		self.exnel = None
 
 		self.html = ''
 		self.css = ''
+
 
 	def comment_el(self, el) -> str:
 		return f'<!--{el.text}-->'
@@ -68,16 +93,18 @@ class HTMLCSSRenderer:
 		pos = get_vector2(el, 'pos', '0,0')
 		size = get_int(el, 'size', '16')
 
-		style = compile_css({
+		uid = generate_uid()
+
+		self.css += compile_css_class({
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
 			'font-size': str(size) + 'px',
 			'font-family': self.exnel.theme.get('text', 'font').removeprefix('[SYS] ')
-		}, style_removals, style_overides)
+		}, '.' + uid, style_removals, style_overides)
 
 		return compile_html('p', el.text, {
-			'style': style
+			'class': uid
 		}, html_removals, html_overides)
 
 	def link_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
@@ -185,8 +212,16 @@ class HTMLCSSRenderer:
 	def render(self, exnel):
 		self.exnel = exnel
 
+		body = self._render_multiple_elements(exnel.root)
+
 		html = '<!DOCTYPE html><html>'
-		html += self._render_multiple_elements(exnel.root)
+
+		if self.embed_css:
+			html += f'<style>{self.css}</style>'
+		else:
+			html += f'<link rel="stylesheet" href="{self.css_link_path}"/>'
+
+		html += body
 		html += '</html>'
 
 		self.html = html
@@ -196,6 +231,6 @@ class HTMLCSSRenderer:
 			file.write(self.html)
 
 	def save_css(self, path: str):
-		'''Note: Only works when separate_css flag is set (default state)'''
+		'''Note: Only works when embed_css flag is set'''
 		with open(path, 'w') as file:
 			file.write(self.css)
