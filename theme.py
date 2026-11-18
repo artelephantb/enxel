@@ -24,7 +24,7 @@ class Theme:
 
 	def _parse_element(self, el):
 		for child in el:
-			self.styles[el.tag][child.tag] = child.text
+			self.styles[el.tag][child.tag] = (child.attrib, child.text)
 
 	def _parse(self, root):
 		for child in root:
@@ -41,13 +41,14 @@ class Theme:
 				self.styles[key] = value
 
 
-	def get(self, el: str, item: str, try_global=True, default=None) -> object:
+	def get(self, el: str, item: str, default=None) -> object:
 		try:
 			element_dict = self.styles[el]
 			return element_dict.get(item, default)
 		except KeyError:
-			if try_global:
-				return self.styles['global'].get(item, default)
+			if not default:
+				return self.styles['global'][item]
+			return default
 
 
 class BaseTheme(Theme):

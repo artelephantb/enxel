@@ -1,3 +1,7 @@
 <global>
 	<font>[SYS] Sans-Serif</font>
 </global>
+
+<background>
+	<color type='hex'>#b5fcf4</color>
+</background>

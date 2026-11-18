@@ -100,7 +100,7 @@ class HTMLCSSRenderer:
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
 			'font-size': str(size) + 'px',
-			'font-family': self.exnel.theme.get('text', 'font').removeprefix('[SYS] ')
+			'font-family': self.exnel.theme.get('text', 'font')[1].removeprefix('[SYS] ')
 		}, '.' + uid, style_removals, style_overides)
 
 		return compile_html('p', el.text, {
@@ -116,7 +116,7 @@ class HTMLCSSRenderer:
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
-			'font-family': self.exnel.theme.get('link', 'font').removeprefix('[SYS] ')
+			'font-family': self.exnel.theme.get('link', 'font')[1].removeprefix('[SYS] ')
 		}, '.' + uid, style_removals, style_overides)
 
 		to = get_str(el, 'to', '')
@@ -217,6 +217,15 @@ class HTMLCSSRenderer:
 		self.exnel = exnel
 
 		body = self._render_multiple_elements(exnel.root)
+
+		# TODO Make colors better
+		background_color = exnel.theme.get('background', 'color', default=({'type':'hex'}, '#fffff'))
+		self.css += compile_css_class(
+			{
+				'background-color': background_color[1]
+			},
+			'body'
+		)
 
 		html = '<!DOCTYPE html><html>'
 
