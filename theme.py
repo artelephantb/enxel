@@ -32,10 +32,24 @@ class Theme:
 			self._parse_element(child)
 
 
-	def add_to(self, to: dict):
-		'''Adds this theme to another theme, replaces is already there'''
-		for key, value in self.styles.items():
+	def add_from(self, theme):
+		'''Adds this theme to another theme, replaces if already there'''
+		for key, value in theme.styles.items():
 			try:
-				to[key].update(value)
+				self.styles[key].update(value)
 			except KeyError:
-				to[key] = value
+				self.styles[key] = value
+
+
+	def get(self, el: str, item: str, try_global=True, default=None) -> object:
+		try:
+			element_dict = self.styles[el]
+			return element_dict.get(item, default)
+		except KeyError:
+			if try_global:
+				return self.styles['global'].get(item, default)
+
+
+class BaseTheme(Theme):
+	def __init__(self, base: dict):
+		self.styles = base

@@ -1,5 +1,5 @@
 from lxml import etree
-from theme import Theme
+from theme import BaseTheme, Theme
 
 
 class Enxel:
@@ -9,11 +9,11 @@ class Enxel:
 		parser = etree.XMLParser(remove_blank_text=True)
 		self.root = etree.fromstring(data, parser=parser)
 
-		self.styles = {
+		self.theme = BaseTheme({
 			'global': {
 				'font': 'Serif'
 			}
-		}
+		})
 
 	@classmethod
 	def from_file(cls, path: str):
@@ -26,7 +26,7 @@ class Enxel:
 
 
 	def add_theme(self, theme: Theme):
-		theme.add_to(self.styles)
+		self.theme.add_from(theme)
 
 
 	def render(self, renderer, keep_comments=False) -> str:
