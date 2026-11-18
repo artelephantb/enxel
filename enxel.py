@@ -9,6 +9,8 @@ class Enxel:
 		parser = etree.XMLParser(remove_blank_text=True)
 		self.root = etree.fromstring(data, parser=parser)
 
+		self.styles = {}
+
 	@classmethod
 	def from_file(cls, path: str):
 		with open(path, 'rb') as file:
@@ -19,8 +21,8 @@ class Enxel:
 		return cls(string.encode('utf-8'))
 
 
-	def add_theme(self, theme: Theme):
-		print(theme)
+	def set_theme(self, theme: Theme):
+		self.styles = theme.styles
 
 
 	def render(self, renderer, keep_comments=False) -> str:

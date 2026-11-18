@@ -8,7 +8,8 @@ class Theme:
 		parser = etree.XMLParser(remove_blank_text=True)
 		root = etree.fromstring(data, parser=parser)
 
-		print(root)
+		self.styles = {}
+		self._parse(root)
 
 
 	@classmethod
@@ -19,3 +20,13 @@ class Theme:
 	@classmethod
 	def from_str(cls, string: str):
 		return cls(string.encode('utf-8'))
+
+
+	def _parse_element(self, el):
+		for child in el:
+			self.styles[el.tag][child.tag] = child.text
+
+	def _parse(self, root):
+		for child in root:
+			self.styles[child.tag] = {}
+			self._parse_element(child)
