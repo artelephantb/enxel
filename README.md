@@ -2,9 +2,9 @@
 ```xml
 <hcon align-items='center'>
 	<vcon>
-		<text size='50'>Exnel</text>
+		<text size='50'>Enxel</text>
 		<link to='https://github.com/artelephantb/enxel'>> GitHub Page</link>
-		<text>Exnel is a free and open source way to write better HTML faster. This example document shows the current capabilities of Exnel!</text>
+		<text>Enxel is a free and open source way to write better HTML faster. This example document shows the current capabilities of Enxel!</text>
 		<hcon align-items='center'>
 			<img src='enxel.jpg'></img>
 		</hcon>

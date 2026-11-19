@@ -1,5 +1,5 @@
 from err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
-from exnel_types import *
+from enxel_types import *
 
 from uid_generator import generate_uid
 
@@ -80,7 +80,7 @@ class HTMLCSSRenderer:
 		self.embed_css = embed_css
 		self.css_link_path = css_link_path
 
-		self.exnel = None
+		self.enxel = None
 
 		self.html = ''
 		self.css = ''
@@ -117,8 +117,8 @@ class HTMLCSSRenderer:
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
 			'font-size': str(size) + 'px',
-			'font-family': self.exnel.theme.get('text', 'font')[1].removeprefix('[SYS] '),
-			'color': self.exnel.theme.get('text', 'color', default=({'type':'hex'}, '#00000'))[1]
+			'font-family': self.enxel.theme.get('text', 'font')[1].removeprefix('[SYS] '),
+			'color': self.enxel.theme.get('text', 'color', default=({'type':'hex'}, '#00000'))[1]
 		}, '.' + uid, style_removals, style_overides)
 
 		return compile_html('p', el.text, {
@@ -135,7 +135,7 @@ class HTMLCSSRenderer:
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
-			'font-family': self.exnel.theme.get('link', 'font')[1].removeprefix('[SYS] ')
+			'font-family': self.enxel.theme.get('link', 'font')[1].removeprefix('[SYS] ')
 		}, '.' + uid, style_removals, style_overides)
 
 		to = get_str(el, 'to', '')
@@ -234,13 +234,13 @@ class HTMLCSSRenderer:
 
 		return html
 
-	def render(self, exnel):
-		self.exnel = exnel
+	def render(self, enxel):
+		self.enxel = enxel
 
-		body = self._render_multiple_elements(exnel.root)
+		body = self._render_multiple_elements(enxel.root)
 
 		# TODO Make colors better
-		background_color = exnel.theme.get('background', 'color', default=({'type':'hex'}, '#ffffff'))
+		background_color = enxel.theme.get('background', 'color', default=({'type':'hex'}, '#ffffff'))
 		self.css += compile_css_class(
 			{
 				'background-color': background_color[1]
