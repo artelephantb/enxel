@@ -44,7 +44,10 @@ class Theme:
 	def get(self, el: str, item: str, default=None) -> object:
 		try:
 			element_dict = self.styles[el]
-			return element_dict.get(item, default)
+			if default:
+				return element_dict.get(item, default)
+			else:
+				return self.styles['global'][item]
 		except KeyError:
 			if not default:
 				return self.styles['global'][item]
