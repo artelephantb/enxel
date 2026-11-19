@@ -72,7 +72,7 @@ def compile_css_class(
 
 
 class HTMLCSSRenderer:
-	def __init__(self, keep_comments=False, embed_css=False, css_link_path='/output.css'):
+	def __init__(self, keep_comments=False, embed_css=False, css_link_path='/output.css', scripts=[]):
 		# TODO: Add user defined elements
 		self.defined_elements = {}
 
@@ -85,11 +85,28 @@ class HTMLCSSRenderer:
 		self.html = ''
 		self.css = ''
 
+		self.scripts = scripts
+
 
 	def comment_el(self, el) -> str:
 		return f'<!--{el.text}-->'
 
-	def text_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
+	def connect_el(self, el, html_overides, html_removals, style_overides, style_removals, connections={}) -> str:
+		html = ''
+		for child in el:
+			html_el = self._render_element(
+				child,
+				html_overides=html_overides,
+				html_removals=html_removals,
+				style_overides=style_overides,
+				style_removals=style_removals,
+				connections=connections | { el.get('type'): el.get('to') }
+			)
+			html += html_el
+
+		return html
+
+	def text_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list, connections: dict) -> str:
 		pos = get_vector2(el, 'pos', '0,0')
 		size = get_int(el, 'size', '16')
 
@@ -105,7 +122,8 @@ class HTMLCSSRenderer:
 		}, '.' + uid, style_removals, style_overides)
 
 		return compile_html('p', el.text, {
-			'class': uid
+			'class': uid,
+			'onclick': connections.get('pressed', '') + '()'
 		}, html_removals, html_overides)
 
 	def link_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
@@ -183,7 +201,7 @@ class HTMLCSSRenderer:
 		return html
 
 
-	def _render_element(self, el, html_overides={}, html_removals=[], style_overides={}, style_removals=[]) -> str:
+	def _render_element(self, el, html_overides={}, html_removals=[], style_overides={}, style_removals=[], connections={}) -> str:
 		# Comment
 		if not isinstance(el.tag, str):
 			if self.keep_comments:
@@ -193,8 +211,10 @@ class HTMLCSSRenderer:
 		match el.tag:
 			case 'comment':
 				return self.comment_el(el)
+			case 'connect':
+				return self.connect_el(el, html_overides, html_removals, style_overides, style_removals, connections)
 			case 'text':
-				return self.text_el(el, html_overides, html_removals, style_overides, style_removals)
+				return self.text_el(el, html_overides, html_removals, style_overides, style_removals, connections)
 			case 'link':
 				return self.link_el(el, html_overides, html_removals, style_overides, style_removals)
 			case 'img':
@@ -228,15 +248,19 @@ class HTMLCSSRenderer:
 			'body'
 		)
 
-		html = '<!DOCTYPE html><html>'
+		html = '<!DOCTYPE html><html><head>'
 
 		if self.embed_css:
 			html += f'<style>{self.css}</style>'
 		else:
 			html += f'<link rel="stylesheet" href="{self.css_link_path}"/>'
 
+		for script in self.scripts:
+			html += f'<script src="{script}"></script>'
+
+		html += '</head><body>'
 		html += body
-		html += '</html>'
+		html += '</body></html>'
 
 		self.html = html
 

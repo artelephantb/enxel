@@ -3,9 +3,9 @@
 </global>
 
 <background>
-	<color type='hex'>#010016</color>
+	<color type='hex'>#ffffff</color>
 </background>
 
 <text>
-	<color type='hex'>#ffffff</color>
+	<color type='hex'>#000000</color>
 </text>

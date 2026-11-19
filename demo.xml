@@ -3,6 +3,9 @@
 		<text size='50'>Exnel</text>
 		<link to='https://github.com/artelephantb/enxel'>> GitHub Page</link>
 		<text>Exnel is a free and open source way to write better HTML faster. This example document shows the current capabilities of Exnel!</text>
+		<connect type='pressed' to='switchMode'>
+			<text>>> Click here to switch modes!</text>
+		</connect>
 		<hcon align-items='center'>
 			<img src='enxel.jpg'></img>
 		</hcon>
