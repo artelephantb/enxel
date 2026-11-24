@@ -68,13 +68,20 @@ class GodotRenderer:
 		pos = get_vector2(el, 'pos', '0,0')
 		size = get_int(el, 'size', '16')
 
+		align_items = get_str(el, 'align-items', 'start')
+		match align_items:
+			case 'start': align_items = '0'
+			case 'middle': align_items = '1'
+			case 'end': align_items = '2'
+
 		uid = generate_uid()
 
 		name = get_counter(self, 'vcon', 'VBoxContainer')
 
 		body = f'\n\n[node name="{name}" type="VBoxContainer" {get_parent(tree)} unique_id={generate_uid_numbers()}]\n'
 		body += 'layout_mode = 1\n'
-		body += 'anchors_preset = 15'
+		body += 'anchors_preset = 15\n'
+		body += f'alignment = {align_items}'
 
 		for child in el:
 			body += self._render_element(child, tree + f'/{name}')
@@ -85,13 +92,20 @@ class GodotRenderer:
 		pos = get_vector2(el, 'pos', '0,0')
 		size = get_int(el, 'size', '16')
 
+		align_items = get_str(el, 'align-items', 'start')
+		match align_items:
+			case 'start': align_items = '0'
+			case 'middle': align_items = '1'
+			case 'end': align_items = '2'
+
 		uid = generate_uid()
 
 		name = get_counter(self, 'hcon', 'HBoxContainer')
 
 		body = f'\n\n[node name="{name}" type="HBoxContainer" {get_parent(tree)} unique_id={generate_uid_numbers()}]\n'
 		body += 'layout_mode = 1\n'
-		body += 'anchors_preset = 15'
+		body += 'anchors_preset = 15\n'
+		body += f'alignment = {align_items}'
 
 		tree_name = name
 		if tree:

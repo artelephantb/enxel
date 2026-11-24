@@ -1,4 +1,4 @@
-<hcon align-items='center'>
+<hcon align-items='middle'>
 	<vcon>
 		<text size='50'>Enxel</text>
 		<link to='https://github.com/artelephantb/enxel'>> GitHub Page</link>
@@ -6,7 +6,7 @@
 		<connect type='pressed' to='switchMode()'>
 			<text>>> Click here to switch modes!</text>
 		</connect>
-		<hcon align-items='center'>
+		<hcon align-items='middle'>
 			<img src='enxel.jpg'></img>
 		</hcon>
 	</vcon>

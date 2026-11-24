@@ -190,7 +190,11 @@ class HTMLCSSRenderer:
 		return html
 
 	def hcon_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:
-		align_items = get_str(el, 'align-items', 'left')
+		align_items = get_str(el, 'align-items', 'start')
+		match align_items:
+			case 'start': align_items = 'left'
+			case 'middle': align_items = 'center'
+			case 'end': align_items = 'right'
 
 		html = f'<div style="display:flex;flex-direction:row;justify-content:{align_items}">'
 		for child in el:
