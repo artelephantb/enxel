@@ -11,3 +11,11 @@
 	</vcon>
 </hcon>
 ```
+
+# Types
+- **Script Connection** (connect)
+- **Text** (text)
+- **Link** (link)
+- **Image** (img)
+- **Vertical Container** (vcon)
+- **Horizontal Container** (hcon)
