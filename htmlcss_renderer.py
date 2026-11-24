@@ -123,7 +123,7 @@ class HTMLCSSRenderer:
 
 		return compile_html('p', el.text, {
 			'class': uid,
-			'onclick': connections.get('pressed', '') + '()'
+			'onclick': connections.get('pressed', '')
 		}, html_removals, html_overides)
 
 	def link_el(self, el, html_overides: dict, html_removals: list, style_overides: dict, style_removals: list) -> str:

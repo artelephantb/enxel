@@ -3,7 +3,7 @@
 		<text size='50'>Enxel</text>
 		<link to='https://github.com/artelephantb/enxel'>> GitHub Page</link>
 		<text>Enxel is a free and open source way to write better HTML faster. This example document shows the current capabilities of Enxel!</text>
-		<connect type='pressed' to='switchMode'>
+		<connect type='pressed' to='switchMode()'>
 			<text>>> Click here to switch modes!</text>
 		</connect>
 		<hcon align-items='center'>
