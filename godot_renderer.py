@@ -28,7 +28,7 @@ class GodotRenderer:
 	def text_el(self, el, tree=None) -> str:
 		tree_str = ''
 		if tree:
-			tree_str = f'parent="{tree}"'
+			tree_str = f' parent="{tree}"'
 
 		pos = get_vector2(el, 'pos', '0,0')
 		size = get_int(el, 'size', '16')
@@ -38,7 +38,11 @@ class GodotRenderer:
 		self.scene += f'\n\n[sub_resource type="LabelSettings" id="LabelSettings_{uid}"]\n'
 		self.scene += f'font_size = {size}'
 
-		return f'\n\n[node name="{get_counter(self, 'text', 'Label')}" type="Label" parent="{tree_str}" unique_id={generate_uid_numbers()}]'
+		body = f'\n\n[node name="{get_counter(self, 'text', 'Label')}" type="Label"{tree_str} unique_id={generate_uid_numbers()}]\n'
+		body += f'text = "{el.text}"\n'
+		body += f'label_settings = SubResource("{'LabelSettings_' + uid}")'
+
+		return body
 
 
 	def _render_element(self, el, tree=None) -> str:
