@@ -117,7 +117,7 @@ class HTMLCSSRenderer:
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
 			'font-size': str(size) + 'px',
-			'font-family': self.enxel.theme.get('text', 'font')[1].removeprefix('[SYS] '),
+			'font-family': self.enxel.theme.get('text', 'font')[1],
 			'color': self.enxel.theme.get('text', 'color', default=({'type':'hex'}, '#00000'))[1]
 		}, '.' + uid, style_removals, style_overides)
 
@@ -135,7 +135,7 @@ class HTMLCSSRenderer:
 			'position': 'absolute',
 			'left': str(pos.x) + 'px',
 			'top': str(pos.y) + 'px',
-			'font-family': self.enxel.theme.get('link', 'font')[1].removeprefix('[SYS] ')
+			'font-family': self.enxel.theme.get('link', 'font')[1]
 		}, '.' + uid, style_removals, style_overides)
 
 		to = get_str(el, 'to', '')
