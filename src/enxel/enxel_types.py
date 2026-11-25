@@ -1,4 +1,4 @@
-from err import AttributeNotFoundError, MismatchedTypesError
+from enxel.err import AttributeNotFoundError, MismatchedTypesError
 
 
 class Vector2:

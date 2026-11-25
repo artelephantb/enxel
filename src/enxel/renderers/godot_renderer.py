@@ -1,7 +1,7 @@
-from err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
-from enxel_types import *
+from enxel.err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
+from enxel.enxel_types import *
 
-from uid_generator import generate_uid, generate_uid_numbers
+from enxel.uid_generator import generate_uid, generate_uid_numbers
 
 
 def get_counter(self, item, name) -> str:

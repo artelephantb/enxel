@@ -1,0 +1,27 @@
+[build-system]
+requires = ['hatchling >= 1.26']
+build-backend = 'hatchling.build'
+
+[project]
+name = 'enxel'
+version = '0.0.1'
+description = 'Write better HTML and CSS, and write it faster'
+readme = 'README.md'
+license = 'MIT'
+license-files = ['LICENSE.txt']
+authors = [
+	{name='Artitapheiont'}
+]
+requires-python = '>=3.9'
+classifiers = [
+	'Programming Language :: Python :: 3',
+	'Operating System :: OS Independent'
+]
+keywords = ['enxel', 'html', 'css', 'godot', 'ui', 'generator']
+dependencies = [
+	'lxml >= 6.1.3'
+]
+
+[project.urls]
+Repository = 'https://github.com/artelephantb/enxel'
+Issues = 'https://github.com/artelephantb/enxel/issues'

@@ -1,7 +1,7 @@
-from err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
-from enxel_types import *
+from enxel.err import ElementDoesNotExistError, AttributeNotFoundError, MismatchedTypesError
+from enxel.enxel_types import *
 
-from uid_generator import generate_uid
+from enxel.uid_generator import generate_uid
 
 
 def compile_html(

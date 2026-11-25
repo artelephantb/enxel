@@ -1,6 +1,6 @@
 from enxel import Enxel
-from theme import Theme
-from htmlcss_renderer import HTMLCSSRenderer
+from enxel.theme import Theme
+from enxel.renderers.htmlcss_renderer import HTMLCSSRenderer
 
 
 enxel = Enxel.from_file('demo.xml')

@@ -1,5 +1,5 @@
 from lxml import etree
-from theme import BaseTheme, Theme
+from enxel.theme import BaseTheme, Theme
 
 
 class Enxel:
