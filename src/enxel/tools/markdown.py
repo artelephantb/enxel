@@ -29,6 +29,7 @@ class Markdown:
 
 		while not self._is_at_end():
 			match self._advance():
+				case '\\': self._advance()
 				case '#': self._heading()
 
 	def _heading(self):
