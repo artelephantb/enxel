@@ -2,7 +2,6 @@ from markdown import Markdown
 
 
 text = '''
-# Hello!
 *Italic*
 **Bold**
 '''

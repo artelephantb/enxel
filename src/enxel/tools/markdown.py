@@ -5,13 +5,6 @@ class ExpectationError(Exception): pass
 
 
 class TokenType(Enum):
-	HEADING_1 = 0
-	HEADING_2 = 1
-	HEADING_3 = 2
-	HEADING_4 = 3
-	HEADING_5 = 4
-	HEADING_6 = 5
-
 	BOLD = 6
 	ITALIC = 7
 
@@ -41,7 +34,6 @@ class Markdown:
 			match self._advance():
 				case '\n': pass
 				case '\\': self._advance()
-				case '#': self._heading()
 				case '*':
 					if self._peak() == '*':
 						self._advance()
@@ -55,34 +47,6 @@ class Markdown:
 			elif text:
 				self._add_token(TokenType.TEXT, text)
 				text = ''
-
-
-	def _heading(self):
-		level = 1
-		while self._peak() == '#':
-			self._advance()
-			level += 1
-
-		while self._peak() == ' ': self._advance()
-
-		value = ''
-		while not self._is_at_end() and self._peak() != '\n':
-			value += self._advance()
-
-		match level:
-			case 1:
-				self._add_token(TokenType.HEADING_1, value)
-			case 2:
-				self._add_token(TokenType.HEADING_2, value)
-			case 3:
-				self._add_token(TokenType.HEADING_3, value)
-			case 4:
-				self._add_token(TokenType.HEADING_4, value)
-			case 5:
-				self._add_token(TokenType.HEADING_5, value)
-			case 6:
-				self._add_token(TokenType.HEADING_6, value)
-
 
 	def _add_token(self, type: TokenType, literal=None):
 		self.tokens.append(Token(type, literal))
