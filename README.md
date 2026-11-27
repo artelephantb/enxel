@@ -34,3 +34,26 @@ Puts child elements side-by-side vertically.
 
 ## Horizontal Container (hcon)
 Puts child elements side-by-side horizontally.
+
+# Elements Todo
+- [ ] Audio
+- [ ] Bold
+- [ ] Button
+- [ ] Canvas
+- [ ] Strike-through
+- [ ] Collapsible Container
+- [ ] Something like HTML div
+- [ ] Separator
+- [ ] Embed
+- [ ] Italic
+- [ ] List
+- [ ] Dropdown
+- [x] Text
+- [x] Image
+- [ ] Subscript
+- [ ] Superscript
+- [ ] Underline
+- [ ] Progress Bar
+- [ ] Math
+- [ ] SVG
+- [ ] Video
