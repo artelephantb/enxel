@@ -12,6 +12,11 @@ class TokenType(Enum):
 	HEADING_5 = 4
 	HEADING_6 = 5
 
+	BOLD = 6
+	ITALIC = 7
+
+	TEXT = 8
+
 class Token:
 	def __init__(self, token: TokenType, literal):
 		self.token = token
@@ -27,10 +32,27 @@ class Markdown:
 		self.current = 0
 		self.tokens = []
 
+		text = ''
 		while not self._is_at_end():
+			still_on_text = False
 			match self._advance():
+				case '\n': pass
 				case '\\': self._advance()
 				case '#': self._heading()
+				case '*':
+					if self._peak() == '*':
+						self._advance()
+						self._add_token(TokenType.BOLD)
+					else:
+						self._add_token(TokenType.ITALIC)
+				case _:
+					still_on_text = True
+			if still_on_text:
+				text += self.source[self.current - 1]
+			elif text:
+				self._add_token(TokenType.TEXT, text)
+				text = ''
+
 
 	def _heading(self):
 		level = 1
@@ -41,7 +63,7 @@ class Markdown:
 		while self._peak() == ' ': self._advance()
 
 		value = ''
-		while self._peak() != '' and self._peak() != '\n':
+		while not self._is_at_end() and self._peak() != '\n':
 			value += self._advance()
 
 		match level:

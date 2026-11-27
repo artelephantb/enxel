@@ -1,4 +1,11 @@
 from markdown import Markdown
 
-md = Markdown('## Test')
+
+text = '''
+# Hello!
+*Italic*
+**Bold**
+'''
+
+md = Markdown(text)
 print(md.tokens)
