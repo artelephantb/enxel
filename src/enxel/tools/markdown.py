@@ -1,8 +1,16 @@
 from enum import Enum
 
 
+class ExpectationError(Exception): pass
+
+
 class TokenType(Enum):
-	HEADING = 0
+	HEADING_1 = 0
+	HEADING_2 = 1
+	HEADING_3 = 2
+	HEADING_4 = 3
+	HEADING_5 = 4
+	HEADING_6 = 5
 
 class Token:
 	def __init__(self, token: TokenType, literal):
@@ -21,11 +29,33 @@ class Markdown:
 
 		while not self._is_at_end():
 			match self._advance():
-				case '#':
-					literal = ''
-					while self._peak() == '#':
-						literal += self._advance()
-					self._add_token(TokenType.HEADING, literal)
+				case '#': self._heading()
+
+	def _heading(self):
+		level = 1
+		while self._peak() == '#':
+			self._advance()
+			level += 1
+
+		while self._peak() == ' ': self._advance()
+
+		value = ''
+		while self._peak() != '' and self._peak() != '\n':
+			value += self._advance()
+
+		match level:
+			case 1:
+				self._add_token(TokenType.HEADING_1, value)
+			case 2:
+				self._add_token(TokenType.HEADING_2, value)
+			case 3:
+				self._add_token(TokenType.HEADING_3, value)
+			case 4:
+				self._add_token(TokenType.HEADING_4, value)
+			case 5:
+				self._add_token(TokenType.HEADING_5, value)
+			case 6:
+				self._add_token(TokenType.HEADING_6, value)
 
 
 	def _add_token(self, type: TokenType, literal=None):
@@ -43,5 +73,8 @@ class Markdown:
 		if self._is_at_end(): return ''
 		return self.source[self.current]
 
-	def _consume(self):
+	def _consume(self, expect: str):
+		if self.source[self.current] != expect:
+			raise ExpectationError(f'Expected \'{expect}\' got \'{self.source[self.current]}\'')
+
 		self.current += 1
