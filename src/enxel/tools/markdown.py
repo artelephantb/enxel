@@ -23,7 +23,10 @@ class Token:
 		self.literal = literal
 
 	def __repr__(self) -> str:
-		return f'<{TokenType(self.token).name}, \'{self.literal}\'>'
+		if self.literal:
+			return f'<{TokenType(self.token).name}, \'{self.literal}\'>'
+		else:
+			return f'<{TokenType(self.token).name}>'
 
 
 class Markdown:
