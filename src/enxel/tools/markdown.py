@@ -5,10 +5,11 @@ class ExpectationError(Exception): pass
 
 
 class TokenType(Enum):
-	BOLD = 6
-	ITALIC = 7
+	BOLD = 0
+	ITALIC = 1
 
-	TEXT = 8
+	TEXT = 2
+	LINK = 3
 
 class Token:
 	def __init__(self, token: TokenType, literal):
@@ -40,6 +41,7 @@ class Markdown:
 						self._add_token(TokenType.BOLD)
 					else:
 						self._add_token(TokenType.ITALIC)
+				case '[': self._link()
 				case _:
 					still_on_text = True
 			if still_on_text:
@@ -47,6 +49,21 @@ class Markdown:
 			elif text:
 				self._add_token(TokenType.TEXT, text)
 				text = ''
+
+	def _link(self):
+		alt = ''
+		while self._peak() != ']' and not self._is_at_end():
+			alt += self._advance()
+		self._consume(']')
+
+		self._consume('(')
+		link = ''
+		while self._peak() != ')' and not self._is_at_end():
+			link += self._advance()
+		self._consume(')')
+
+		self._add_token(TokenType.LINK, link)
+
 
 	def _add_token(self, type: TokenType, literal=None):
 		self.tokens.append(Token(type, literal))
